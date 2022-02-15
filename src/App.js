@@ -1,6 +1,6 @@
 import './App.css';
 import { useState } from 'react';
-import GraphView from './components/GraphView';
+import GraphView, { animateObject } from './components/GraphView';
 
 function getRandomArbitrary(min, max) {
   return Math.floor(Math.random() * (max - min) + min);
@@ -22,17 +22,23 @@ const generateGraph = () => {
       }
     } 
   }
-  console.log(graph);
+  for (let i = 0; i < nVertex; i++){
+    if(!graph.find((elem) => elem.data.source === graph[i].data.id || elem.data.target === graph[i].data.id)){
+      let rNeighboor = getRandomArbitrary(0,nVertex-1);
+      while(rNeighboor === i){
+        rNeighboor = getRandomArbitrary(0,nVertex-1);
+      }
+      graph.push({group: 'edges', data: { source: letras[i], target: letras[rNeighboor], weight: getRandomArbitrary(1,10) } });
+    }
+  }
   return graph;
 }
 
 function App() {
-  const temp = generateGraph();
-  const [graph, setGraph] = useState(temp);
-  console.log(temp,graph);
+  const [graph, setGraph] = useState( generateGraph());
   return (
     <div>
-      <GraphView elements = {graph}/>
+      <GraphView elements = {graph} setGraph={setGraph} />
     </div>
   );
 }
