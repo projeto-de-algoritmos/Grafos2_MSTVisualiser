@@ -1,34 +1,38 @@
-import Graph from 'directed-graph';
 import './App.css';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import GraphView from './components/GraphView';
 
 function getRandomArbitrary(min, max) {
-  return Math.random() * (max - min) + min;
+  return Math.floor(Math.random() * (max - min) + min);
 }
 
 const generateGraph = () => {
-  const letras='abcdefghijklmnopqrstuvxyz';
+  const graph = [];
+  const letras='abcdefghijklmnopqrstuvxyz'.toUpperCase();
   const nVertex = getRandomArbitrary(15,20);
-  var graph = new Graph();
-  for(i = 0; i < nVertex; i++){
-    graph.addVertex(letras[i]);
+  for(let i = 0; i < nVertex; i++){
+    graph.push({group: 'nodes', data: { id: letras[i], label: letras[i] }});
     console.log("letra: " + letras[i]);
   }
-  for (var i=0; i < nVertex; i++){
+  for (let i = 0; i < nVertex; i++){
     for(var j = 0; j < getRandomArbitrary(1,3); j++){
-      graph.addEdge(letras[i],letras[j],getRandomArbitrary(1,10));
-      console.log("aresta: " + letras[i] + ',' + letras[j]);
+      const rNeighboor = getRandomArbitrary(0,nVertex-1);
+      if(rNeighboor !== i && !graph.find((node) => node.data.source === rNeighboor &&  node.data.target === i )){
+        graph.push({group: 'edges', data: { source: letras[i], target: letras[rNeighboor], weight: getRandomArbitrary(1,10) } });
+      }
     } 
   }
+  console.log(graph);
+  return graph;
 }
 
 function App() {
-  const [graph, setGraph] = useState(generateGraph());
-
+  const temp = generateGraph();
+  const [graph, setGraph] = useState(temp);
+  console.log(temp,graph);
   return (
     <div>
-      <GraphView />
+      <GraphView elements = {graph}/>
     </div>
   );
 }
