@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import CytoscapeComponent from 'react-cytoscapejs';
 import Cytoscape from 'cytoscape';
 import COSEBilkent from 'cytoscape-cose-bilkent';
+import { primsMST } from "./Graph";
 
 Cytoscape.use(COSEBilkent);
 
@@ -15,8 +16,9 @@ const STEPS = {
 }
 
 const GraphView = (props) => {
-  const [state, setState] = useState({animation:animateObject()});
-  const {elements,setGraph} = props;
+  const {elements} = props;
+  const [state, setState] = useState({MSTElements: [], elements, animation:animateObject()});
+  console.log(state);
   const tick = () => {
     setTimeout(() => {
       let { animation } = state;
@@ -57,15 +59,12 @@ const GraphView = (props) => {
   const layout = { name: 'cose-bilkent' };
   const style = { width: '100%', height: 'calc(100vh - 53px)' };
 
-  const handleOnClick = (cy, node) => {
-    if(!state.animation.running){
-      setState({...state, animation:animateObject(true, node, node, null, null, null, STEPS.SET_VISITED)});
-    }
-  }
 
   const cy = cyArg => {
     cyArg.one('tap', 'node', function(evt){
-      handleOnClick(cyArg, evt.target);
+      const elems = primsMST(cyArg.nodes());
+      console.log("tap", elems);
+      setState({...state, MSTElements: elems});
     });
   }
 
@@ -84,7 +83,8 @@ const GraphView = (props) => {
   return (
     <div>
       {getPrintableStatus()}
-      <CytoscapeComponent cy={cy} layout={layout} elements={elements} style={style} stylesheet={stylesheet} />
+      <CytoscapeComponent cy={cy} layout={layout} elements={state.elements} style={style} stylesheet={stylesheet} />
+      {state.MSTElements.length && <CytoscapeComponent cy={cy} layout={layout} elements={state.MSTElements} style={style} stylesheet={stylesheet} />}
     </div>
   );
 }
