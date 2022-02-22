@@ -34,7 +34,8 @@ const GraphView = (props) => {
   }
 
 
-  useEffect(tick, []);
+  //useEffect(tick, []);
+  
   const stylesheet = [
     {
       selector: 'edge', 
@@ -62,7 +63,7 @@ const GraphView = (props) => {
 
   const cy = cyArg => {
     cyArg.one('tap', 'node', function(evt){
-      const elems = primsMST(cyArg.nodes());
+      const elems = primsMST(cyArg.nodes(), evt.target);
       console.log("tap", elems);
       setState({...state, MSTElements: elems});
     });
@@ -82,8 +83,7 @@ const GraphView = (props) => {
 
   return (
     <div>
-      {getPrintableStatus()}
-      <CytoscapeComponent cy={cy} layout={layout} elements={state.elements} style={style} stylesheet={stylesheet} />
+      {!state.MSTElements.length && <CytoscapeComponent cy={cy} layout={layout} elements={state.elements} style={style} stylesheet={stylesheet} />}
       {state.MSTElements.length && <CytoscapeComponent cy={cy} layout={layout} elements={state.MSTElements} style={style} stylesheet={stylesheet} />}
     </div>
   );

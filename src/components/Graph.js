@@ -3,7 +3,7 @@ import cytoscape from 'cytoscape';
 import { graphEdge, graphNode } from "../App";
 
 
-export const primsMST = (nodes) => {
+export const primsMST = (nodes, startingNode) => {
     // Initialize graph that'll contain the MST
     const MST = new cytoscape();
     const MSTBlueprint = [];
@@ -13,7 +13,7 @@ export const primsMST = (nodes) => {
  
  
     // Select first node as starting node
-    let s = nodes[0];
+    let s = startingNode;
  
  
     // Create a Priority Queue and explored set
